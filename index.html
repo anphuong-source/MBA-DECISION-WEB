@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MBA Decision Visualization</title>
+
+  <!-- Import Merriweather font here! -->
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&display=swap" rel="stylesheet">
+
+  <!-- Then link your styles.css -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <nav class="tab-menu">
+    <button class="tablink" onclick="openTab(event, 'Majors')">Majors</button>
+    <button class="tablink" onclick="openTab(event, 'Compare yourself')">Compare yourself</button>
+    <button class="tablink" onclick="openTab(event, 'FlowChart')">Flow Chart</button>
+    <button class="tablink" onclick="openTab(event, 'Gender')">Gender</button>
+    <button class="tablink" onclick="openTab(event, 'PieChart')">Pie Chart</button>
+  </nav>
+
+  <div id="Majors" class="tab-content">
+    <div class="word-cloud">
+      <span class="major-word" onclick="selectMajor(this)">Arts</span>
+      <span class="major-word" onclick="selectMajor(this)">Business</span>
+      <span class="major-word" onclick="selectMajor(this)">Engineering</span>
+      <span class="major-word" onclick="selectMajor(this)">Economics</span>
+      <span class="major-word" onclick="selectMajor(this)">Science</span>
+    </div>
+  
+    <div class="major-info">
+      <canvas id="experienceChart"></canvas>
+      <div id="topJobs"></div>
+    </div>
+  </div>
+  
+
+  <!-- empty placeholders for other tabs -->
+  <div id="Compare yourself" class="tab-content" style="display:none;">Compare yourself coming soon...</div>
+  <div id="FlowChart" class="tab-content" style="display:none;">Flow Chart coming soon...</div>
+  <div id="Gender" class="tab-content" style="display:none;">Gender analysis coming soon...</div>
+  <div id="PieChart" class="tab-content" style="display:none;">Pie Chart coming soon...</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="script.js"></script>
+
+</body>
+</html>

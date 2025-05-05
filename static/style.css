@@ -1,0 +1,85 @@
+@font-face {
+  font-family: 'Mekaryu';
+  src: url('/fonts/Mekaryu-Display-Serif.otf') format('opentype');
+}
+body {
+  background-color: #f4ebdb;
+  font-family: 'NotoSerifDisplay', serif;
+  text-align: center;
+  padding: 40px;
+  margin: 0;
+  }
+  
+  .flow-chart {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 40px;
+    flex-direction: row;
+  }
+  
+  .job-level {
+    background-color: #fff4e6;
+    padding: 16px 24px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s;
+    border: 2px solid #aa3b19;
+    color: #aa3b19;
+  }
+  
+  .job-level:hover {
+    background-color: #ffe8d9;
+    transform: scale(1.05);
+  }
+  
+  .arrow {
+    font-size: 24px;
+    color: #aa3b19;
+  }  
+  
+  .details-box {
+    margin-top: 40px;
+    font-size: 18px;
+    line-height: 1.8;
+  }
+  h1 {
+    font-family: 'Mekaryu', serif;
+    font-size: 36px;
+    color: #aa3b19;
+    margin-bottom: 30px;
+  }
+  .arrow-line {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-in forwards;
+  }
+  
+  .arrow-line:nth-child(1) { animation-delay: 0.3s; }
+  .arrow-line:nth-child(2) { animation-delay: 0.6s; }
+  .arrow-line:nth-child(3) { animation-delay: 0.9s; }
+  
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+  #chart-container {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.6s ease;
+  }  
+  
+  #chart-container.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+    
+  
+
+  

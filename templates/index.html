@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MBA Career Flow Chart</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <h1>MBA Career Flow Chart</h1>
+
+  <div class="flow-chart">
+    <div class="job-level" onclick="showDetails('Entry Level')">Entry Level</div>
+    <div class="arrow">→</div>
+    <div class="job-level" onclick="showDetails('Junior Level')">Junior Level</div>
+    <div class="arrow">→</div>
+    <div class="job-level" onclick="showDetails('Mid Level')">Mid Level</div>
+    <div class="arrow">→</div>
+    <div class="job-level" onclick="showDetails('Senior Level')">Senior Level</div>
+  </div>  
+
+  <div id="details-box" class="details-box"></div>
+  <div id="chart-container">
+    <canvas id="salaryChart" width="300" height="200"></canvas>
+  </div>  
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post-MBA Role Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <div class="container">
+        <!-- Word Cloud Section -->
+        <div class="word-cloud">
+            <h2>Select an Undergraduate Major</h2>
+            <span class="major-word">Economics</span>
+            <span class="major-word">Business</span>
+            <span class="major-word">Arts</span>
+            <span class="major-word">Science</span>
+            <span class="major-word">Engineering</span>
+        </div>        
+        
+
+        <!-- Chart Section -->
+        <div class="chart-container">
+            <h2>Post-MBA Roles and Years of Work Experience</h2>
+            <div id="chart-area"></div>
+        </div>
+    </div>
+
+    <!-- Include the WordCloud2 library for generating the word cloud -->
+    <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>

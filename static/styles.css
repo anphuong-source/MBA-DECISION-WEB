@@ -1,0 +1,70 @@
+/* General body styling */
+body {
+    font-family: 'Merriweather', serif;
+    background-color: #f9f5f0;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: 100vh;
+}
+
+/* Container to hold word cloud and chart */
+.container {
+    display: flex;
+    width: 90%;  /* Make the content width smaller than the screen size */
+    max-width: 1200px;
+    justify-content: space-between;
+}
+
+/* Word Cloud Styling */
+.word-cloud {
+    width: 45%;
+    text-align: center;
+    margin-right: 20px; /* Space between word cloud and chart */
+}
+
+#word-cloud {
+    width: 100%;
+    height: 300px;
+    margin-top: 20px;
+}
+
+
+#chart-area img {
+    width: 100%;
+    max-width: 900px;
+    height: auto;
+}
+
+/* Header Styling */
+h2 {
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Styling for individual words in the word cloud */
+/* Word cloud styling for unselected majors */
+.word-cloud span {
+    cursor: pointer;
+    font-weight: 300; /* Lighter weight */
+    color: #b0b0b0; /* Faded color */
+    transition: all 0.3s ease;
+    font-size: 1.2em; /* Default size */
+}
+
+/* Styling for the selected major */
+.word-cloud span.selected {
+    font-weight: bold;
+    color: #333; /* Darker color when selected */
+    font-size: 1.5em; /* Increase font size when selected */
+}
+
+/* Optional: Add hover effect for better interaction */
+.word-cloud span:hover {
+    color: #007bff; /* Highlight color */
+    text-decoration: underline;
+}
+

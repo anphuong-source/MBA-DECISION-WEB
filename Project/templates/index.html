@@ -1,0 +1,367 @@
+                                                                                                                                                                                                                                                                                                                                                                                                                                
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scroll-Driven Donut Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Montserrat', sans-serif;
+            background-color: white;
+        }
+        #chart-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+        }
+        canvas {
+            width: 500px !important;
+            height: 500px !important;
+        }
+        h1 {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 10;
+            font-family: 'Mekaryu Display Serif', serif;
+        }
+        .legend {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .legend div {
+            margin-bottom: 12px;
+            opacity: 1;
+            transition: opacity 0.4s ease;
+        }
+        .legend-box {
+            width: 12px;
+            height: 12px;
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        .legend-title {
+            font-family: 'Noto Serif Display', serif;
+            font-weight: bold;
+        }
+        .legend strong {
+            font-family: 'Merriweather', serif;
+            font-weight: bold;
+        }
+        .scroll-box {
+            width: 300px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid #999;
+            border-radius: 6px;
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%) translateY(100vh);
+            opacity: 0;
+            z-index: 20;
+            transition: opacity 0.8s ease;
+        }
+        .scroll-box.active {
+            opacity: 1;
+        }
+    </style>
+
+<style>
+    .legend div {
+        margin-bottom: 12px;
+        opacity: 1;
+        transition: opacity 0.4s ease, background-color 0.4s ease;
+    }
+    .legend div.active {
+        opacity: 1;
+        background-color: rgba(255, 255, 0, 0.15);
+        border-radius: 4px;
+        padding: 4px;
+        .legend {
+        font-size: 14px;
+        line-height: 1.6;
+        transition: opacity 0.4s ease; /* Smooth fade */
+    }
+    .legend div {
+        margin-bottom: 12px;
+        opacity: 1;
+        transition: opacity 0.4s ease, background-color 0.4s ease; /* Smooth fade + background change */
+    }
+    .legend div.active {
+        opacity: 1;
+        background-color: rgba(255, 255, 0, 0.15);
+        border-radius: 4px;
+        padding: 4px;
+    }
+    }
+</style>
+
+<script>
+
+  
+
+    // Opacity control removed as requested else {
+            
+            legend.classList.remove('active');
+        
+    ;
+
+
+    // Opacity control removed as requested else {
+            
+            legend.classList.remove('active');
+        
+    ;
+
+</script>
+
+    <style>
+        @font-face {
+            font-family: 'Mekaryu Display Serif';
+            src: url('Mekaryu-Display-Serif.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+    </style>
+
+<style>
+    .legend div {
+        margin-bottom: 12px;
+        opacity: 1;
+        transition: opacity 0.4s ease, background-color 0.4s ease;
+    }
+    .legend div.active {
+        opacity: 1;
+        background-color: rgba(255, 255, 0, 0.15);
+        border-radius: 4px;
+        padding: 4px;
+    }
+</style>
+
+<script>
+
+
+   
+
+    // Highlight the corresponding legend
+    if (entIndex !== -1 && entLegends[entIndex]) {
+        entLegends[entIndex].style.opacity = '1';
+    }
+    if (netIndex !== -1 && netLegends[netIndex]) {
+        netLegends[netIndex].style.opacity = '1';
+    }
+
+</script>
+
+</head>
+<body>
+    <h1>Entrepreneurial & Networking Fill</h1>
+    <div id="chart-container">
+        <div class="legend" id="ent-legend"></div>
+        <canvas id="donutChart"></canvas>
+        <div class="legend" id="net-legend"></div>
+    </div>
+    <div id="scroll-boxes">
+        <div class="scroll-box">Box 1</div>
+        <div class="scroll-box">Box 2</div>
+        <div class="scroll-box">Box 3</div>
+        <div class="scroll-box">Box 4</div>
+        <div class="scroll-box">Box 5</div>
+        <div class="scroll-box">Box 6</div>
+        <div class="scroll-box">Box 7</div>
+        <div class="scroll-box">Box 8</div>
+    </div>
+    <script>
+        let chart;
+        let currentValue = 0;
+        let maxValue = 100;
+        let scrollSpeed = 2;
+        let dataValues = { entrepreneurial: [], networking: [], entColors: [], netColors: [], labels: [] };
+
+        async function fetchData() {
+            const entRes = await fetch(`/get_chart_data/entrepreneurial`);
+            const netRes = await fetch(`/get_chart_data/networking`);
+            const entData = await entRes.json();
+            const netData = await netRes.json();
+            dataValues.entrepreneurial = entData.values.map(v => parseFloat(v.toFixed(2)));
+            dataValues.networking = netData.values.map(v => parseFloat(v.toFixed(2)));
+            dataValues.entColors = entData.colors;
+            dataValues.netColors = netData.colors;
+            dataValues.labels = entData.labels;
+        }
+
+        function buildLegend(containerId, title, labels, colors, values = []) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div class='legend-title'>${title}</div>` +
+                labels.map((label, i) => {
+                    const percentage = values[i] ? values[i].toFixed(2) + '%' : '';
+                    return `<div data-index='${i}'><span class='legend-box' style='background-color:${colors[i]}'></span><strong>${percentage}</strong><br>${label}</div>`;
+                }).join('');
+        }
+
+        function buildChart() {
+            const ctx = document.getElementById('donutChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [
+                        { label: 'Entrepreneurial Interest', data: [], backgroundColor: [], borderColor: '#fff', borderWidth: 2, weight: 1 },
+                        { label: 'Networking Importance', data: [], backgroundColor: [], borderColor: '#fff', borderWidth: 2, weight: 1 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    cutout: '80%',
+                    rotation: -Math.PI / 2,
+                    circumference: 360,
+                    animation: false,
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: true, text: 'Entrepreneurial & Networking Fill' }
+                    }
+                }
+            });
+        }
+
+        function calculateActiveSegments(value, values, colors) {
+            let data = [];
+            let bgColors = [];
+            let accumulated = 0;
+            for (let i = 0; i < values.length; i++) {
+                if (accumulated + values[i] <= value) {
+                    data.push(values[i]);
+                    bgColors.push(colors[i]);
+                    accumulated += values[i];
+                } else {
+                    let remaining = value - accumulated;
+                    if (remaining > 0) {
+                        data.push(remaining);
+                        bgColors.push(colors[i]);
+                    }
+                    break;
+                }
+            }
+            if (value < 100) {
+                data.push(100 - value);
+                bgColors.push("rgba(0,0,0,0)");
+            }
+            return { data, bgColors };
+        }
+
+        function smoothUpdate(targetValue) {
+            const entLegends = document.querySelectorAll('#ent-legend > div');
+            const netLegends = document.querySelectorAll('#net-legend > div');
+
+            const entValue = Math.min(targetValue, 100);
+            const netValue = Math.max(0, targetValue - 100);
+
+            const ent = calculateActiveSegments(entValue, dataValues.entrepreneurial, dataValues.entColors);
+            const net = calculateActiveSegments(netValue, dataValues.networking, dataValues.netColors);
+
+            chart.data.datasets[0].data = ent.data;
+            chart.data.datasets[0].backgroundColor = ent.bgColors;
+            chart.data.datasets[1].data = net.data;
+            chart.data.datasets[1].backgroundColor = net.bgColors;
+            chart.update();
+
+
+if (targetValue === 0) {
+    document.getElementById('ent-legend').style.opacity = '0.3';
+    document.getElementById('net-legend').style.opacity = '0.3';
+} else if (targetValue > 0 && targetValue <= 100) {
+    document.getElementById('ent-legend').style.opacity = '1';
+    document.getElementById('net-legend').style.opacity = '0.3';
+} else {
+    document.getElementById('ent-legend').style.opacity = '1';
+    document.getElementById('net-legend').style.opacity = '1';
+}
+     
+
+            
+            }
+        
+
+        function setupScrollResponsive() {
+            let scrollQueue = 0;
+            let animating = false;
+            window.addEventListener('wheel', (e) => {
+                const delta = e.deltaY > 0 ? scrollSpeed : -scrollSpeed;
+                const maxQueue = 200;
+                scrollQueue = Math.max(-maxQueue, Math.min(maxQueue, scrollQueue + delta));
+                if (!animating) animateScroll();
+            }, { passive: false });
+
+            function animateScroll() {
+                animating = true;
+                let step = 0;
+                let velocity = scrollQueue / 10;
+                const steps = Math.max(30, Math.min(100, Math.round(Math.abs(velocity * 3))));
+                const startValue = currentValue;
+                const targetValue = Math.max(0, Math.min(maxValue * 2, startValue + scrollQueue));
+                scrollQueue = 0;
+                currentValue = targetValue;
+
+                function frame() {
+                    step++;
+                    const value = startValue + (targetValue - startValue) * (step / steps);
+                    smoothUpdate(value);
+                    updateSingleBoxByThreshold(value);
+                    if (step < steps) {
+                        requestAnimationFrame(frame);
+                    } else if (scrollQueue !== 0) {
+                        animateScroll();
+                    } else {
+                        animating = false;
+                    }
+                }
+
+                requestAnimationFrame(frame);
+            }
+        }
+
+        function updateSingleBoxByThreshold(value) {
+            const boxes = document.querySelectorAll('.scroll-box');
+            const thresholds = [0, 17.23, 45.05, 73.4, 100, 117, 144.4, 172, 200];
+            boxes.forEach((box, i) => {
+                const rangeStart = thresholds[i];
+                const rangeEnd = thresholds[i + 1];
+                if (value >= rangeStart && value < rangeEnd) {
+                    const progress = Math.min(1, Math.max(0, (value - rangeStart) / (rangeEnd - rangeStart)));
+                    const bottom = window.innerHeight;
+                    const top = 2;
+                    const translateY = bottom - (bottom - top) * progress;
+                    box.style.transform = `translateX(-50%) translateY(${translateY}px)`;
+                    box.style.opacity = 1;
+                } else {
+                    box.style.opacity = 0;
+                }
+            });
+        }
+
+        window.onload = async () => {
+            await fetchData();
+            buildChart();
+            buildLegend('ent-legend', 'Entrepreneurial Interest', dataValues.labels, dataValues.entColors, dataValues.entrepreneurial);
+            buildLegend('net-legend', 'Networking Importance', dataValues.labels, dataValues.netColors, dataValues.networking);
+            smoothUpdate(0);
+            setupScrollResponsive();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>How I Match with MBA Degree?</title>
+  <!-- 1. Fonts & CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="/static/mba-cards.css" />
+
+  <!-- 2. Third-party JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+
+  <!-- ✅ 3. Custom scripts: helper first, main logic second -->
+  <script src="/static/segmentedMeter.js" defer></script>
+  <script src="/static/map.js" defer></script>
+  <script src="/static/mba-cards.js" defer></script>
+  <script src="/static/script.js" defer></script>
+
+  <style>
+    @font-face {
+      font-family: 'Mekaryu';
+      src: url('/static/Mekaryu.otf') format('opentype');
+    }
+
+    body {
+      margin: 0;
+      padding: 40px 20px;
+      font-family: 'Montserrat', sans-serif;
+      color: #3a2c1c;
+      background: url('/static/bg-mba.png') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    h1 {
+      font-family: 'Mekaryu', serif;
+      background-color: rgba(181, 59, 27, 0.9);
+      color: white;
+      text-align: center;
+      padding: 15px 30px;
+      border-radius: 15px;
+      width: fit-content;
+      margin: auto;
+      font-size: 28px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .container {
+      border: 2px solid #b53b1b;
+      border-radius: 18px;
+      padding: 35px;
+      margin-top: 30px;
+      background-color: rgba(255, 250, 240, 0.82);
+      backdrop-filter: blur(3px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* 3 columns for desktop */
+      gap: 18px 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    input,
+    select {
+      padding: 10px 12px;
+      border: 2px solid #b53b1b;
+      border-radius: 10px;
+      font-size: 14px;
+      background-color: #fff;
+      color: #3a2c1c;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: #913014;
+      box-shadow: 0 0 0 2px rgba(181, 59, 27, 0.2);
+    }
+
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      align-self: center;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .slider-value {
+      font-weight: bold;
+      align-self: flex-start;
+      padding-left: 12px;
+      color: #b53b1b;
+      font-size: 15px;
+    }
+    
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      background: transparent;
+      cursor: pointer;
+    }
+    
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 4px;
+      background: linear-gradient(to right, var(--color, #b53b1b) var(--val, 50%), #eee var(--val, 50%));
+      border-radius: 8px;
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.08);
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 18px;
+      width: 18px;
+      background: #b53b1b;
+      border-radius: 50%;
+      border: 2px solid white;
+      margin-top: -7px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      cursor: pointer;
+    }
+    
+    input[type="range"]::-moz-range-track {
+      height: 4px;
+      background: #ddd;
+      border-radius: 8px;
+    }
+    
+    input[type="range"]::-moz-range-progress {
+      height: 4px;
+      background: #b53b1b;
+      border-radius: 8px;
+    }
+    
+    input[type="range"]::-moz-range-thumb {
+      height: 18px;
+      width: 18px;
+      background: #b53b1b;
+      border: 2px solid white;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    button {
+      grid-column: 1 / -1;
+      justify-self: center;
+      padding: 14px 30px;
+      font-size: 16px;
+      background-color: #b53b1b;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    button:hover {
+      background-color: #a33114;
+      transform: translateY(-1px);
+    }
+
+    #result {
+      margin-top: 40px;
+      padding: 25px;
+      background-color: rgba(255, 250, 240, 0.88);
+      border: 2px dashed #b53b1b;
+      border-radius: 15px;
+    }
+
+    /* Basic mode result layout */
+    .basic-result-container {
+      border: 2px solid #b94a2c;
+      border-radius: 12px;
+      padding: 18px 18px 10px 18px;
+      background: #fffaf5;
+      margin-bottom: 24px;
+    }
+    .basic-columns {
+      display: flex;
+      gap: 40px;
+      align-items: center;
+      justify-content: flex-start;
+      margin-bottom: 18px;
+    }
+    .basic-match-col, .basic-scholarship-col {
+      background: #fdf8ee;
+      border-radius: 8px;
+      padding: 18px 24px 18px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 220px;
+      max-width: 550px;
+      position: relative;
+    }
+    .match-label-top, .scholarship-label-top {
+      font-size: 20px;
+      font-weight: bold;
+      color: #444;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .match-label-centered {
+      font-size: 24px;
+      font-weight: bold;
+      color: #555;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .radial-progress {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin: 0 auto;
+    }
+    .percentage-text {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 32px;
+      font-weight: bold;
+      color: #4caf50;
+    }
+    .percentage-text.scholarship {
+      color: #b94a2c;
+    }
+    .segmented-meter-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 100%;
+      background: #f4e1db;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
+      margin-top: 10px;
+    }
+
+    .segmented-meter-container .label {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #aa3b19;
+      text-align: center;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .frame-box {
+      background: #fffef8;
+      border-radius: 12px;
+      padding: 8px 12px;
+      margin: 0 auto;
+      width: 100%;
+      max-width: 240px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.08);
+    }
+
+    .segments {
+      width: 100%;
+      max-width: 100%;
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .segment {
+      flex: 0 0 auto;
+      width: 10px;
+      height: 20px;
+      background: #ddd;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }    
+
+    .segment:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      background: #333;
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+    }
+    .segment {
+      flex: 0 0 auto;
+      width: 10px;
+      height: 20px;
+      background: #ddd;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+    .segment.filled-low { background: #f44336; }
+    .segment.filled-medium { background: #ff9800; }
+    .segment.filled-high { background: #4caf50; }
+    .scholarship-percent {
+      font-size: 22px;
+      color: #b94a2c;
+      font-weight: bold;
+      margin-top: 2px;
+    }
+    .advanced-details-grid { /* For Risk Factors & Scholarship side-by-side */
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+      form {
+        grid-template-columns: 1fr;
+      }
+
+      button {
+        grid-column: span 1;
+      }
+    }
+
+    #map {
+      border: none;
+      border-radius: 0;
+    }
+    
+    #map.map-ready {
+      border: 2px solid #c66e21;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 30px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    .match-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      min-width: 160px;
+    }
+    
+    .info-column {
+      flex: 2;
+      min-width: 300px;
+    }
+
+    .info-column h3 { /* Titles like "Recommended Specialization" */
+      color: #024b4b;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+    
+    .salary-column {
+      flex: 1;
+      min-width: 180px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      text-align: right;
+    }
+    
+    #result > h3 { /* For main section titles like "Recommended University Programs" */
+      color: #b53b1b;
+      font-size: 1.4rem;
+      margin-top: 25px;
+      margin-bottom: 15px;
+      font-weight: 600;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .risk-section h4 {
+        font-size: 24px; /* Increase size */
+        color: #d9534f;   /* Bootstrap-style red */
+        font-weight: bold;
+        margin-bottom: 15px; /* Added margin */
+    }
+
+    #result .career-path-section h4,
+    #result .recommended-skills-section h4 { /* For sub-section titles */
+      font-size: 1.3rem;
+      color: #b53b1b;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .risk-section {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+    
+    .risk-line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    
+    .risk-line .label {
+      flex: 1;
+      font-weight: 500;
+    }
+    
+    .risk-line .bar {
+      flex: 2;
+      background: #eee;
+      border-radius: 8px;
+      height: 10px;
+      position: relative;
+      overflow: hidden; /* Ensures the ::before pseudo-element respects the border-radius */
+    }
+
+    /* Apply to both .bar (advanced) and .risk-meter (basic) */
+    .risk-line .bar.risk-level-low::before,
+    .risk-line .risk-meter.risk-level-low::before {
+      background-color: #f44336; /* Green for low risk */
+    }
+    .risk-line .bar.risk-level-medium::before,
+    .risk-line .risk-meter.risk-level-medium::before {
+      background-color: #ff9800; /* Orange for medium risk */
+    }
+    .risk-line .bar.risk-level-high::before,
+    .risk-line .risk-meter.risk-level-high::before {
+      background-color: #4caf50; /* Red for high risk */
+    }
+    /* Updated CSS for risk-meter and strength-meter using pseudo-elements for fill */
+    .risk-line .risk-meter,
+    .program-strengths .strength-meter {
+      flex: 2; /* For risk-meter */
+      background: #eee;
+      border-radius: 8px;
+      height: 10px; /* Or as desired */
+      position: relative;
+      overflow: hidden; /* Ensures pseudo-element respects border-radius */
+    }
+    .program-strengths .strength-meter { /* Specific adjustments if needed */
+        width: 100%; /* Example if it needs full width in its context */
+    }
+
+    .risk-line .risk-meter::before,
+    .program-strengths .strength-meter::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      background: #b53b1b;
+      border-radius: 8px;
+      width: var(--value, 0%); /* Controlled by JavaScript */
+      transition: width 0.5s ease-in-out;
+    }
+    
+    .meter-labels {
+      display: flex;
+      justify-content: space-around;
+      font-size: 14px;
+      font-weight: bold;
+      background: #ddd;
+      border-radius: 6px;
+      padding: 6px;
+    }
+
+    .candidate-card,
+    .candidate-card.new-layout {
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      border: 2px solid #b53b1b;
+      background: #fffefb;
+      border-radius: 15px;
+    }
+    
+    .divider-vert {
+      height: 100px;
+      width: 1px;
+      background: #ddd;
+      margin: 0 20px;
+    }
+    
+    .divider-horz {
+      height: 1px;
+      background: #ddd;
+      margin: 20px 0;
+    }
+    
+    .fit-type {
+      background: #d48f63;
+      color: #fff;
+      padding: 6px 18px;
+      font-weight: bold;
+      text-align: center;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      display: inline-block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Circular Chart Styles */
+    .circular-chart {
+      width: 90px;
+      height: 90px;
+      /* stroke-width: 16; /* This property on the SVG element itself is not standard for controlling child path stroke widths here.
+                              The .circle class correctly defines the stroke-width for the path. */
+      transform: rotate(-90deg);
+    }
+
+    .circular-chart-container {
+      position: relative; /* Establishes a positioning context for the .percentage-overlay */
+      width: 90px;       /* Matches the width of the .circular-chart (SVG) */
+      height: 90px;      /* Matches the height of the .circular-chart (SVG) */
+      /* This container will be centered horizontally by its parent .match-column's align-items: center */
+    }
+
+    .circle {
+      stroke: #aa3b19;
+      stroke-width: 16;
+      fill: none;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.5s ease;
+    }
+
+    .percentage {
+      transform: rotate(90deg);
+      font-size: 12px;
+      font-weight: bold;
+      fill: #333;
+    }
+
+    /* Segmented Meter Styles */
+    .segmented-meter-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 100%;
+      background: #f4e1db;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
+      margin-top: 10px;
+    }
+
+    .segmented-meter-container .label {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #aa3b19;
+      text-align: center;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .frame-box {
+      background: #fffaf0;
+      border-radius: 14px;
+      padding: 20px;
+      margin: 0 auto;
+      box-shadow: inset 0 0 6px rgba(0,0,0,0.03);
+      width: 100%;
+      max-width: 80%; /* Or 800px, or 100%, depending on desired effect */
+    }
+
+    .segments {
+      width: 100%;
+      max-width: 100%;
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .segment:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      background: #333;
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+    }
+    .segment {
+      flex: 1 0 4.5%;
+      position: relative;
+      max-width: 20px;
+      height: 24px;
+      background: #ddd;
+      border-radius: 6px;
+      transition: background-color 0.3s ease;
+    }
+
+    .segment.filled-low {
+      background-color: #e74c3c !important;
+      box-shadow: 0 0 4px rgba(231, 76, 60, 0.4);
+    }
+
+    .segment.filled-medium {
+      background-color: #f39c12 !important;
+      box-shadow: 0 0 4px rgba(243, 156, 18, 0.4);
+    }
+
+    .segment.filled-high {
+      background-color: #2ecc71 !important;
+      box-shadow: 0 0 4px rgba(46, 204, 113, 0.4);
+    }
+
+    .segment.filled {
+      animation: none;
+    }
+
+    @keyframes fillUp {
+      0% {
+        background-color: #ddd;
+      }
+      100% {
+        background-color: inherit;
+      }
+    }
+
+    .percent-text {
+      margin-top: 12px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #aa3b19;
+      text-align: center;
+    }
+
+    .meter-track {
+      display: flex;
+      position: relative;
+      height: 30px;
+      border-radius: 5px;
+      overflow: hidden;
+      margin: 8px auto;
+      width: 100%;
+      max-width: 100%;
+      box-shadow: 0 0 0 1px #aaa inset;
+    }
+
+    .pointer {
+      position: absolute;
+      top: -16px;
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-bottom: 16px solid #444;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+
+    .meter-scale {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #555;
+      max-width: 400px;
+      margin: 4px auto 0;
+    }
+
+    .meter-values {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 8px;
+    }
+
+    .meter-values .value,
+    .meter-values .label {
+      background: #ddd;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .card-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 20px;
+      }
+
+      .match-column,
+      .info-column,
+      .salary-column {
+        align-items: center;
+        text-align: center;
+      }
+
+      .salary-column {
+        align-items: center;
+      }
+
+      .risk-line {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .risk-line .bar {
+        width: 100%;
+      }
+
+      .risk-line .score {
+        align-self: flex-end;
+      }
+    }
+
+    .match-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      min-width: 160px;
+      position: relative;
+    }
+    .percentage-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 10px;
+      font-weight: bold;
+      color: #024b4b;
+      pointer-events: none;
+    }
+    .match-label {
+      margin-top: .5rem;
+      font-size: .9rem;
+      text-transform: uppercase;
+      color: #777;
+    }
+   
+    /* Salary Section Styles */
+    .salary-section {
+      text-align: right;
+      margin-top: 1.5rem;
+    }
+
+    .salary-title {
+      font-weight: 700;
+      color: #024b4b;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .salary-value {
+      font-size: 70px; /* Increased size */
+      font-weight: bold;
+      color: #5c9960;
+      margin: 0.5rem 0;
+    }
+
+    .salary-increase {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.4rem;
+      font-size: 1.3rem;
+      color: #b53b1b;
+      font-weight: 600;
+    }
+
+    .salary-increase .icon {
+      background-color: #0f3e3e;
+      color: white;
+      font-size: 1rem;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    /* Ensure SVG paths don't fill */
+    .circular-chart path {
+      fill: none;
+      color:rgb(155, 189, 91);
+    }
+
+    @media (max-width: 768px) {
+      .salary-section {
+        margin-top: 1rem;
+        text-align: center;
+      }
+      
+      .salary-increase {
+        justify-content: center;
+      }
+      
+      .salary-value {
+        font-size: 3rem; /* Increased responsive size */
+      }
+      
+      .salary-increase {
+        font-size: 1.1rem;
+      }
+    }
+
+    /* Improvements Section Styles */
+    .improvements-section {
+      margin: 1.5rem 0;
+      padding: 1rem;
+      background: #fffaf0;
+      border-radius: 12px;
+      border: 1px solid #f4e1db;
+    }
+
+    .improvements-section h3 {
+      color: #b53b1b;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .improvements-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .improvements-list li {
+      position: relative;
+      padding-left: 2rem;
+      margin-bottom: 16px;
+      line-height: 1.5;
+      color: #3a2c1c;
+    }
+
+    .improvements-list li:last-child {
+      margin-bottom: 0;
+    }
+
+    .improvements-list li::before {
+      content: attr(data-number);
+      position: absolute;
+      left: 0;
+      color: #b53b1b;
+      font-weight: 600;
+    }
+
+    .tuition-label {
+      font-weight: bold;
+      color: #7a2a0e;
+      margin-right: 4px;
+    }
+    .tuition-value {
+      color: #1a3e2a;
+      font-weight: 600;
+    }
+
+    .program-tag {
+      display: inline-block;
+      background: #f4e1db;
+      color: #b53b1b;
+      font-size: 0.95em;
+      padding: 3px 10px;
+      border-radius: 8px;
+      margin-right: 6px;
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+
+    .assessment-toggle {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .toggle-slider {
+      background-color: #b53b1b;
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(26px);
+    }
+
+    .toggle-label {
+      font-weight: bold;
+      color: #3a2c1c;
+    }
+
+    .advanced-fields {
+      display: none; /* Default state, JS will toggle */
+      grid-column: 1 / -1; /* Make this div span all columns of the parent form grid */
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px 20px;
+    }
+
+    /* Removed: .advanced-fields > div { grid-column: span 3; } */
+    /* This allows advanced fields to naturally flow into 3 columns */
+
+    .assessment-type.active {
+      color: #b53b1b;
+    }
+
+    .basic-fields {
+      display: contents; /* So the grid still applies to children */
+    }
+  </style>
+</head>
+<body>
+  <h1>How I match with MBA degree?</h1>
+
+  <div class="container">
+    <div class="assessment-toggle">
+      <span class="toggle-label assessment-type active" id="basic-label">Basic Assessment</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="assessment-toggle">
+        <span class="toggle-slider"></span>
+      </label>
+      <span class="toggle-label assessment-type" id="advanced-label">Advanced Assessment</span>
+    </div>
+
+    <form id="mbaForm" method="POST" action="/submit">
+      <input type="hidden" id="assessment_type" name="assessment_type" value="basic">
+      <div class="basic-fields">
+        <div>
+          <label for="Age">Age</label>
+          <input type="number" id="Age" name="Age" required min="18" max="65">
+        </div>
+        <div>
+          <label for="Work_Experience">Work Experience (years)</label>
+          <input type="number" id="Work_Experience" name="Work_Experience" required min="0" max="40">
+        </div>
+        <div>
+          <label for="Undergraduate_Major">Undergraduate Major</label>
+          <input type="text" id="Undergraduate_Major" name="Undergraduate_Major" required>
+        </div>
+        <div>
+          <label for="Current_Job_Title">Current Job Title</label>
+          <input type="text" id="Current_Job_Title" name="Current_Job_Title" required>
+        </div>
+        <div>
+          <label for="GMAT_GRE_Score">GMAT/GRE Score</label>
+          <input type="number" id="GMAT_GRE_Score" name="GMAT_GRE_Score" required min="200" max="805">
+        </div>
+        <div>
+          <label for="Reason_for_MBA">Reason for Pursuing MBA</label>
+          <input type="text" id="Reason_for_MBA" name="Reason_for_MBA" required placeholder="e.g., Career Growth, Industry Switch, Entrepreneurship, etc.">
+        </div>
+      </div>
+      <!-- Advanced Fields (Hidden by default) -->
+      <div class="advanced-fields" style="display: none;">
+        <!-- Basic Fields adapted for Advanced Mode -->
+        <div>
+          <label for="Adv_Age">Age</label>
+          <input type="number" id="Adv_Age" name="Age" required min="18" max="65">
+        </div>
+        <div>
+          <label for="Adv_Years_of_Work_Experience">Work Experience (years)</label>
+          <input type="number" id="Adv_Years_of_Work_Experience" name="Years_of_Work_Experience" required min="0" max="40">
+        </div>
+        <div>
+          <label for="Adv_Undergraduate_Major">Undergraduate Major</label>
+          <input type="text" id="Adv_Undergraduate_Major" name="Undergraduate_Major" required>
+        </div>
+        <div>
+          <label for="Adv_Current_Job_Title">Current Job Title</label>
+          <input type="text" id="Adv_Current_Job_Title" name="Current_Job_Title" required>
+        </div>
+        <div>
+          <label for="Adv_GREGMAT_Score">GMAT/GRE Score</label>
+          <input type="number" id="Adv_GREGMAT_Score" name="GREGMAT_Score" required min="200" max="805">
+        </div>
+        <div>
+          <label for="Adv_Reason_for_MBA">Reason for Pursuing MBA</label>
+          <input type="text" id="Adv_Reason_for_MBA" name="Reason_for_MBA" required placeholder="e.g., Career Growth, Industry Switch, Entrepreneurship, etc.">
+        </div>
+
+        <!-- Existing Advanced-Specific Fields -->
+        <div>
+          <label for="Adv_Gender">Gender:</label>
+          <select id="Adv_Gender" name="Gender" required>
+            <option value="">Select</option>
+            <option>Female</option>
+            <option>Male</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div>
+          <label for="Adv_Undergraduate_GPA">Undergraduate GPA:</label>
+          <input id="Adv_Undergraduate_GPA" name="Undergraduate_GPA" type="number" step="0.01" min="0" max="4" required>
+        </div>
+        <div>
+          <label for="Adv_Annual_Salary_Before_MBA">Annual Salary Before MBA:</label>
+          <input id="Adv_Annual_Salary_Before_MBA" name="Annual_Salary_Before_MBA" type="number" required>
+        </div>
+        <div>
+          <label for="Adv_Has_Management_Experience">Management Experience:</label>
+          <select id="Adv_Has_Management_Experience" name="Has_Management_Experience" required>
+            <option value="">Select</option>
+            <option>Yes</option>
+            <option>No</option>
+          </select>
+        </div>
+        <div>
+          <label for="Adv_Undergrad_University_Ranking">University Ranking:</label>
+          <input id="Adv_Undergrad_University_Ranking" name="Undergrad_University_Ranking" type="number" required>
+        </div>
+        <div>
+          <label for="Adv_Entrepreneurial_Interest">Entrepreneurial Interest (1–10):</label>
+          <div class="slider-group">
+            <input type="range" id="Adv_Entrepreneurial_Interest" name="Entrepreneurial_Interest" min="1" max="10" value="5" oninput="this.nextElementSibling.textContent = this.value; updateSliderFill(this);">
+            <span class="slider-value">5</span>
+          </div>
+        </div>
+        <div>
+          <label for="Adv_Networking_Importance">Networking Importance (1–10):</label>
+          <div class="slider-group">
+            <input type="range" id="Adv_Networking_Importance" name="Networking_Importance" min="1" max="10" value="5" oninput="this.nextElementSibling.textContent = this.value; updateSliderFill(this);">
+            <span class="slider-value">5</span>
+          </div>
+        </div>
+        <div>
+          <label for="Adv_MBA_Funding_Source">MBA Funding Source:</label>
+          <input id="Adv_MBA_Funding_Source" name="MBA_Funding_Source" type="text" required>
+        </div>
+        <div>
+          <label for="Adv_Desired_PostMBA_Role">Desired Post-MBA Role:</label>
+          <input id="Adv_Desired_PostMBA_Role" name="Desired_PostMBA_Role" type="text" required>
+        </div>
+        <div>
+          <label for="Adv_Expected_PostMBA_Salary">Expected Post-MBA Salary:</label>
+          <input id="Adv_Expected_PostMBA_Salary" name="Expected_PostMBA_Salary" type="number" required>
+        </div>
+        <div>
+          <label for="Adv_Location_Preference_PostMBA">Post-MBA Location Preference:</label>
+          <select id="Adv_Location_Preference_PostMBA" name="Location_Preference_PostMBA" required>
+            <option value="">Select</option>
+            <option>Domestic</option>
+            <option>International</option>
+          </select>
+        </div>
+        <div>
+          <label for="Adv_Online_vs_OnCampusMBA">MBA Format:</label>
+          <select id="Adv_Online_vs_OnCampusMBA" name="Online_vs_OnCampusMBA" required>
+            <option value="">Select</option>
+            <option>Online</option>
+            <option>On-campus</option>
+          </select>
+        </div>
+        <div>
+          <label for="Adv_Decided_to_Pursue_MBA">Have you decided to pursue MBA?</label>
+          <select id="Adv_Decided_to_Pursue_MBA" name="Decided_to_Pursue_MBA" required>
+            <option value="">Select</option>
+            <option>Yes</option>
+            <option>No</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit">🎓 Compare My Profile</button>
+    </form>
+  </div>
+
+  <div id="result">
+    <!-- Results will appear here -->
+  </div>
+
+  <script>
+    // Updates slider fill color based on its value
+    function updateSliderFill(slider) {
+      const val = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+      slider.style.setProperty('--val', `${val}%`);
+    }
+  
+    // Select all sliders and bind input event
+    document.querySelectorAll('input[type="range"]').forEach(slider => {
+      updateSliderFill(slider); // Initial update on page load
+      slider.addEventListener('input', () => updateSliderFill(slider));
+    });
+
+    // Removed unused DOMContentLoaded listener that referenced "meter-auto" and "renderBasicFormAndResults"
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const toggle = document.getElementById('assessment-toggle');
+      const basicLabel = document.getElementById('basic-label');
+      const advancedLabel = document.getElementById('advanced-label');
+      
+      const basicFieldsDiv = document.querySelector('.basic-fields');
+      const advancedFieldsDiv = document.querySelector('.advanced-fields');
+      
+      const assessmentTypeInput = document.getElementById('assessment_type');
+
+      function setFormMode(isAdvanced) {
+        if (isAdvanced) {
+          basicLabel.classList.remove('active');
+          advancedLabel.classList.add('active');
+          if (basicFieldsDiv) basicFieldsDiv.style.display = 'none';
+          if (advancedFieldsDiv) advancedFieldsDiv.style.display = 'grid';
+          assessmentTypeInput.value = 'advanced';
+        } else {
+          basicLabel.classList.add('active');
+          advancedLabel.classList.remove('active');
+          if (basicFieldsDiv) basicFieldsDiv.style.display = 'contents'; // Use 'contents' to respect parent grid
+          if (advancedFieldsDiv) advancedFieldsDiv.style.display = 'none';
+          assessmentTypeInput.value = 'basic';
+        }
+      }
+
+      // Set initial mode based on checkbox state (default is basic)
+      setFormMode(toggle.checked);
+
+      toggle.addEventListener('change', function() {
+        setFormMode(this.checked);
+      });
+      // 3) — everything below is the **Advanced mode** result-renderer —
+      /**
+     * Creates a horizontal bar of N segments, coloring
+     * them up to `probability` (0…1).
+     */
+    function initSegmentedMeter(container, probability, segments = 20) {
+      const segs = container.querySelector('.segments');
+      segs.innerHTML = '';
+      for (let i = 0; i < segments; i++) {
+        const div = document.createElement('div');
+        div.className = 'segment';
+        segs.appendChild(div);
+      }
+      const fillCount = Math.round(probability * segments);
+      let cls = probability <= 0.3
+        ? 'filled-low'
+        : probability <= 0.7
+          ? 'filled-medium'
+          : 'filled-high';
+      segs.querySelectorAll('.segment').forEach((d, i) => {
+        if (i < fillCount) d.classList.add(cls);
+      });
+    }
+
+    /**
+     * Renders the top “card” with:
+     * - circular match score
+     * - scholarship segmented meter
+     * - risk bars
+     * - salary delta
+     */
+    function generateCandidateCard(result, baseSalary) {
+      const m = result.match_score || 0;
+      const p = (result.scholarship_probability || 0) / 100;
+      const fit = result.fit_type || 'Unknown';
+      const predSal = result.predicted_salary || 0;
+      const delta = predSal - baseSalary;
+      const up = delta >= 0;
+      const deltaText = up
+        ? `⬆️ ${delta.toLocaleString()}$`
+        : `⬇️ ${Math.abs(delta).toLocaleString()}$`;
+      const ringClass = m >= 80 ? 'green' : m >= 60 ? 'orange' : 'red';
+
+      return `
+        <div class="candidate-card new-layout">
+          <div class="card-header">
+            <!-- MATCH SCORE -->
+            <div class="match-column">
+              <div class="circular-chart-container"> {/* New wrapper */}
+                <svg viewBox="0 0 36 36" class="circular-chart ${ringClass}">
+                  <path class="circle-bg"
+                        d="M18 2.0845a15.9155 15.9155 0 0 1 0 31.831"/>
+                  <path class="circle"
+                        stroke-dasharray="100"
+                        stroke-dashoffset="${100-m}"
+                        d="M18 2.0845a15.9155 15.9155 0 0 1 0 31.831"/>
+                </svg>
+                <div class="percentage-overlay">${m}%</div>
+              </div>
+              <div class="match-label">Matching score</div>
+            </div>
+
+            <!-- SCHOLARSHIP & RISK -->
+            <div class="info-column">
+              <div class="fit-type">#${fit}</div>
+              <div class="segmented-meter-container" id="meter-${result.id||'auto'}">
+                <div class="label">Scholarship Probability</div>
+                <div class="frame-box"><div class="segments"></div></div>
+                <div class="percent-text">${(p*100).toFixed(0)}%</div>
+              </div>
+              <div class="risk-section">
+                <h4>Risk Factors</h4>
+                ${Object.entries(result.risk_factors||{}).map(([lbl, sc]) => `
+                  <div class="risk-line">
+                    <div class="label">${lbl}</div>
+                    <div class="bar" style="--value: ${sc*10}%"></div>
+                    <div class="score">${sc}/10</div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- SALARY -->
+            <div class="salary-column">
+              <div class="salary-title">Post-MBA salary prediction</div>
+              <div class="salary-value">$${predSal.toLocaleString()}</div>
+              <div class="delta-text ${up?'up':'down'}">${deltaText}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // 4) Wire up the form
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('mbaForm');
+      form.addEventListener('submit', async e => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(form));
+        try {
+          const resp = await fetch(form.action, {
+            method: form.method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          const result = await resp.json();
+          if (!resp.ok) throw new Error(result.message||resp.statusText);
+
+          // build and show
+          const baseSal = parseFloat(data.Annual_Salary_Before_MBA||0);
+          const cardHtml = generateCandidateCard(result, baseSal);
+
+          let html = `
+            <h2>Result Summary</h2>
+            <p><strong>📚 Recommended Field:</strong> ${result.recommended_mba_field}</p>
+            <p><strong>🧾 Summary:</strong> ${result.summary}</p>
+            <h3>🎓 Recommended MBA Programs</h3>
+            ${ result.recommended_mba_programs.length
+                ? `<ul>${result.recommended_mba_programs.map(p=>`
+                    <li><strong>${p.school}</strong> — ${p.program_type} (${p.location})<br>
+                    <em>${p.fit_reason}</em></li>
+                  `).join('')}</ul>`
+                : `<p><em>No personalized matches found.</em></p>`
+            }
+            <h3>🚀 Career Path</h3>
+            <ul>${result.career_path.map(r=>`<li>${r}</li>`).join('')}</ul>
+            <h3>🧠 Skills to Build</h3>
+            <ul>${result.recommended_skills.map(s=>`<li>${s}</li>`).join('')}</ul>
+            <h3>🌍 Best Locations</h3>
+            <ul>${(result.best_locations||[]).map(loc=>`
+              <li>${loc.city}: ${loc.reason}</li>
+            `).join('')}</ul>
+            <div id="map" style="height:400px;margin-top:20px"></div>
+            <p><strong>💸 ROI (5 years):</strong> $${result.roi}</p>
+          `;
+
+          const resDiv = document.getElementById('result');
+          resDiv.innerHTML = cardHtml + html;
+          resDiv.style.display = 'block';
+
+          // init segmented meters
+          document.querySelectorAll('.segmented-meter-container').forEach(c => {
+            const prob = (result.scholarship_probability||0)/100;
+            initSegmentedMeter(c, prob);
+          });
+
+          // initialize map
+          if (result.best_locations?.length) {
+            loadInteractiveMap(result.best_locations);
+            setTimeout(()=>{
+              document.getElementById('map')?.classList.add('map-ready');
+            }, 100);
+          }
+        }
+        catch(err) {
+          const resDiv = document.getElementById('result');
+          resDiv.innerHTML = `
+            <div style="color:red;padding:20px;background:#fff;border-radius:8px">
+              <h3>Error</h3><p>${err.message}</p>
+            </div>`;
+          resDiv.style.display = 'block';
+          console.error(err);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

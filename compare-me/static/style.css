@@ -1,0 +1,67 @@
+/* Add these styles to your existing CSS file (e.g., static/style.css) */
+
+/* Styles for the radial progress ring container */
+.radial-progress {
+  position: relative;
+  /* Adjust size as needed, matching the SVG viewBox or container */
+  width: 120px; /* Container size matching SVG viewBox */
+  height: 120px; /* Container size matching SVG viewBox */
+  display: inline-block; /* Or block depending on layout */
+}
+
+/* Styles for the SVG element */
+.radial-progress svg {
+  transform: rotate(-90deg); /* Rotate to start from the top */
+  width: 100%; /* Make SVG fill its container */
+  height: 100%; /* Make SVG fill its container */
+}
+
+/* Styles for the background circle */
+.radial-progress .circle-bg {
+  fill: none;
+  stroke: #333; /* Background circle color */
+  stroke-width: 8; /* Adjust stroke width relative to radius/viewBox */
+}
+
+/* Styles for the progress circle */
+.radial-progress .circle-progress {
+  fill: none;
+  /* Stroke color is set dynamically by JS based on score */
+  stroke-width: 8; /* Adjust stroke width */
+  stroke-linecap: round; /* Smooth ends of the progress bar */
+  transition: stroke-dashoffset 0.8s ease; /* Smooth animation effect */
+}
+
+/* Styles for the percentage text overlay */
+.radial-progress .percentage-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.8em; /* Adjust font size */
+  font-weight: 700;
+  user-select: none;
+  /* Color is set dynamically by JS based on score */
+}
+
+/* Styles for the label below the ring (using existing class) */
+.match-label {
+  margin-top: 10px; /* Space between ring and label */
+  font-size: 0.9em; /* Font size for the label */
+  color: #aaa; /* Color for the label */
+  text-align: center; /* Center the label text */
+}
+
+/* Basic layout for the column containing the ring and label */
+.candidate-card .match-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center the ring and label horizontally */
+    justify-content: center; /* Center vertically if needed */
+    padding: 10px; /* Add some padding around the column */
+}
+
+/* Hide the redundant match-score text element */
+.candidate-card .match-column .match-score {
+    display: none;
+}

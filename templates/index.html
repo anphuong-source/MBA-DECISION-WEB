@@ -1,37 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Post-MBA Role Analysis</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Undergraduate to MBA Maze</title>
 
-</head>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700&display=swap" rel="stylesheet" />
 <body>
-    <div class="container">
-        <!-- Word Cloud Section -->
-        <div class="word-cloud">
-            <h2>Select an Undergraduate Major</h2>
-            <span class="major-word">Economics</span>
-            <span class="major-word">Business</span>
-            <span class="major-word">Arts</span>
-            <span class="major-word">Science</span>
-            <span class="major-word">Engineering</span>
-        </div>        
-        
 
-        <!-- Chart Section -->
-        <div class="chart-container">
-            <h2>Post-MBA Roles and Years of Work Experience</h2>
-            <div id="chart-area"></div>
+  <!-- Main Content: Chart + Word Cloud + Description Section -->
+  <main id="interactive-dashboard"> <!-- Changed main container ID -->
+    <div id="chart-section"> <!-- This ID can remain if CSS targets it -->
+      <div class="flex-container">
+        <div class="left-section">
+          <h2 class="section-title">Select an Undergraduate Major</h2>
+          <div class="word-cloud">
+            <span class="major-word" data-major="Economics">Economics</span>
+            <span class="major-word" data-major="Business">Business</span>
+            <span class="major-word" data-major="Arts">Arts</span>
+            <span class="major-word" data-major="Science">Science</span>
+            <span class="major-word" data-major="Engineering">Engineering</span>
+          </div>
         </div>
+        <div class="right-section">
+          <h2 class="section-title">Illustrations and Descriptions</h2>
+          <div id="chart-container">
+            <div id="chart-area"></div> <!-- Plotly chart goes here -->
+          </div>
+          <!-- Description Box Area -->
+          <div id="chart-description-area">
+            <div id="description-box" class="description-content" style="display: none;">
+              <p id="description-text"></p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </main>
 
-    <!-- Include the WordCloud2 library for generating the word cloud -->
-    <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <!-- JS Scripts -->
+  <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 
 </body>
 </html>
